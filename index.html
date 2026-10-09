@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>Spike A 테스트 페이지</title>
+<style>
+body{font:15px/1.6 -apple-system,sans-serif;max-width:760px;margin:16px auto;padding:0 12px}
+h3{margin:18px 0 4px;font-size:14px;color:#555}
+textarea,.ce,iframe{width:100%;box-sizing:border-box;border:1px solid #bbb;padding:8px;font:inherit;min-height:90px}
+iframe{height:110px;padding:0}
+</style></head><body>
+<h3>1. textarea</h3>
+<textarea id="t1" rows="4">안녕하세요. 저는 와이프랑 춘천에 다녀왔어요. 연락은 010-1234-5678 로 주세요. 날씨가 정말 좋았다.</textarea>
+<h3>2. contenteditable (p + br 혼합)</h3>
+<div id="t2" class="ce" contenteditable="true"><p>안녕하세요. 오늘은 회사에서 일찍 나왔어요.</p><p>메일은 test.user@example.com 입니다<br>감사합니다.</p></div>
+<h3>3. iframe + designMode (구형 에디터 방식)</h3>
+<iframe id="t3"></iframe>
+<h3>4. Shadow DOM 안의 contenteditable</h3>
+<div id="t4host"></div>
+<h3>5. 입력마다 DOM을 통째로 다시 그리는 편집기 (React류 재렌더링 흉내)</h3>
+<div id="t5" class="ce" contenteditable="true"></div>
+<script>
+const SAMPLE='안녕하세요. 집에서 아이랑 놀았어요. 번호는 010-9876-5432 예요. 즐거운 하루였어요.';
+// 3
+const f=document.getElementById('t3'); f.contentDocument.open();
+f.contentDocument.write('<body style="font:15px sans-serif;margin:8px">'+SAMPLE+'</body>'); f.contentDocument.close();
+f.contentDocument.designMode='on';
+// 4
+const host=document.getElementById('t4host'); const sr=host.attachShadow({mode:'open'});
+sr.innerHTML='<div id="inner" contenteditable="true" style="border:1px solid #bbb;padding:8px;min-height:60px">'+SAMPLE+'</div>';
+// 5
+const t5=document.getElementById('t5');
+const render=(txt)=>{ t5.innerHTML=''; txt.split('\n').forEach(line=>{const p=document.createElement('div'); p.textContent=line||'​'; t5.appendChild(p);}); };
+render('남편이랑 영화 봤어요. 문의는 a.b@naver.com 으로요.');
+t5.addEventListener('input',()=>{ const txt=[...t5.children].map(d=>d.textContent.replace('​','')).join('\n'); const sel=getSelection(); const off=sel.anchorOffset; render(txt); });
+</script></body></html>

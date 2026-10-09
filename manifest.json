@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "BotProof Spike A",
+  "version": "0.0.8",
+  "description": "편집기에서 글을 읽고 문장별 하이라이트가 되는지 확인하는 스파이크",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["highlight.css"],
+      "all_frames": true,
+      "match_about_blank": true,
+      "run_at": "document_idle"
+    }
+  ]
+}
